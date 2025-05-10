@@ -1,9 +1,11 @@
+package RealEstateProperty;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class Buyer extends User {
     private List<Integer> reservationIds; // List of reservation IDs made by this buyer
-    private List<String> preferences; // Property preferences (type, location, price range, etc.)
+    private List<String> preferences; // RealEstateProperty.Property preferences (type, location, price range, etc.)
 
     public Buyer(int userId, String username, String password, String name, String email, String phone) {
         super(userId, username, password, "BUYER", name, email, phone);
@@ -11,7 +13,7 @@ public class Buyer extends User {
         this.preferences = new ArrayList<>();
     }
 
-    // Reservation management
+    // RealEstateProperty.Reservation management
     public void addReservation(int reservationId) {
         reservationIds.add(reservationId);
     }
@@ -47,7 +49,7 @@ public class Buyer extends User {
 
     @Override
     public String toString() {
-        return "Buyer{" +
+        return "RealEstateProperty.Buyer{" +
                 "userId=" + getUserId() +
                 ", username='" + getUsername() + '\'' +
                 ", name='" + getName() + '\'' +

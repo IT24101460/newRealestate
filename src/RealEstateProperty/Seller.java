@@ -1,3 +1,5 @@
+package RealEstateProperty;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,7 +11,7 @@ public class Seller extends User {
         this.propertyIds = new ArrayList<>();
     }
 
-    // Property management
+    // RealEstateProperty.Property management
     public void addProperty(int propertyId) {
         propertyIds.add(propertyId);
     }
@@ -28,7 +30,7 @@ public class Seller extends User {
 
     @Override
     public String toString() {
-        return "Seller{" +
+        return "RealEstateProperty.Seller{" +
                 "userId=" + getUserId() +
                 ", username='" + getUsername() + '\'' +
                 ", name='" + getName() + '\'' +

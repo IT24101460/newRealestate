@@ -1,3 +1,5 @@
+package RealEstateProperty;
+
 public class User {
     private int userId;
     private String username;
@@ -41,7 +43,7 @@ public class User {
 
     @Override
     public String toString() {
-        return "User{" +
+        return "RealEstateProperty.User{" +
                 "userId=" + userId +
                 ", username='" + username + '\'' +
                 ", role='" + role + '\'' +

@@ -1,3 +1,5 @@
+package RealEstateProperty;
+
 import java.time.LocalDateTime;
 import java.util.Scanner;
 
@@ -21,7 +23,7 @@ public class Main {
 
     private static void showMainMenu() {
         while (true) {
-            System.out.println("\n=== Real Estate Property Listings Portal ===");
+            System.out.println("\n=== Real Estate RealEstateProperty.Property Listings Portal ===");
             System.out.println("1. Login");
             System.out.println("2. Register");
             System.out.println("3. Exit");
@@ -75,8 +77,8 @@ public class Main {
     private static void register() {
         System.out.println("\n=== Registration ===");
         System.out.println("Select role:");
-        System.out.println("1. Seller");
-        System.out.println("2. Buyer");
+        System.out.println("1. RealEstateProperty.Seller");
+        System.out.println("2. RealEstateProperty.Buyer");
         System.out.print("Choose role: ");
 
         int roleChoice = scanner.nextInt();
@@ -115,11 +117,11 @@ public class Main {
 
     private static void showSellerMenu(Seller seller) {
         while (true) {
-            System.out.println("\n=== Seller Menu ===");
-            System.out.println("1. Add Property");
+            System.out.println("\n=== RealEstateProperty.Seller Menu ===");
+            System.out.println("1. Add RealEstateProperty.Property");
             System.out.println("2. View My Properties");
-            System.out.println("3. Update Property");
-            System.out.println("4. Delete Property");
+            System.out.println("3. Update RealEstateProperty.Property");
+            System.out.println("4. Delete RealEstateProperty.Property");
             System.out.println("5. Logout");
             System.out.print("Choose an option: ");
 
@@ -149,9 +151,9 @@ public class Main {
 
     private static void showBuyerMenu(Buyer buyer) {
         while (true) {
-            System.out.println("\n=== Buyer Menu ===");
+            System.out.println("\n=== RealEstateProperty.Buyer Menu ===");
             System.out.println("1. View All Properties");
-            System.out.println("2. Make Reservation");
+            System.out.println("2. Make RealEstateProperty.Reservation");
             System.out.println("3. View My Reservations");
             System.out.println("4. Add Preference");
             System.out.println("5. Logout");
@@ -187,8 +189,8 @@ public class Main {
             System.out.println("1. View All Users");
             System.out.println("2. View All Properties");
             System.out.println("3. View All Reservations");
-            System.out.println("4. Delete User");
-            System.out.println("5. Delete Property");
+            System.out.println("4. Delete RealEstateProperty.User");
+            System.out.println("5. Delete RealEstateProperty.Property");
             System.out.println("6. Logout");
             System.out.print("Choose an option: ");
 
@@ -216,14 +218,14 @@ public class Main {
                     int userId = scanner.nextInt();
                     scanner.nextLine(); // Consume newline
                     userManager.deleteUser(userId);
-                    System.out.println("User deleted successfully!");
+                    System.out.println("RealEstateProperty.User deleted successfully!");
                     break;
                 case 5:
                     System.out.print("Enter property ID to delete: ");
                     int propertyId = scanner.nextInt();
                     scanner.nextLine(); // Consume newline
                     propertyManager.deleteProperty(propertyId);
-                    System.out.println("Property deleted successfully!");
+                    System.out.println("RealEstateProperty.Property deleted successfully!");
                     break;
                 case 6:
                     return;
@@ -235,7 +237,7 @@ public class Main {
 
     // Helper methods for property management
     private static void addProperty(Seller seller) {
-        System.out.println("\n=== Add New Property ===");
+        System.out.println("\n=== Add New RealEstateProperty.Property ===");
         System.out.print("Enter property name: ");
         String name = scanner.nextLine();
         System.out.print("Enter price: ");
@@ -251,7 +253,7 @@ public class Main {
         propertyManager.addProperty(property);
         seller.addProperty(propertyId);
 
-        System.out.println("Property added successfully!");
+        System.out.println("RealEstateProperty.Property added successfully!");
     }
 
     private static void viewAllProperties() {
@@ -286,9 +288,9 @@ public class Main {
             buyer.addReservation(reservationId);
             property.setStatus("Reserved");
             propertyManager.updateProperty(property);
-            System.out.println("Reservation made successfully!");
+            System.out.println("RealEstateProperty.Reservation made successfully!");
         } else {
-            System.out.println("Property not available for reservation.");
+            System.out.println("RealEstateProperty.Property not available for reservation.");
         }
     }
 
@@ -300,7 +302,7 @@ public class Main {
                 Property property = propertyManager.getProperty(reservation.getPropertyId());
                 System.out.println(reservation);
                 if (property != null) {
-                    System.out.println("Property: " + property);
+                    System.out.println("RealEstateProperty.Property: " + property);
                 }
                 System.out.println();
             }
@@ -327,7 +329,7 @@ public class Main {
             scanner.nextLine(); // Consume newline
             property.setPrice(newPrice);
             propertyManager.updateProperty(property);
-            System.out.println("Property updated successfully!");
+            System.out.println("RealEstateProperty.Property updated successfully!");
         } else {
             System.out.println("Invalid property ID or you don't own this property.");
         }
@@ -343,7 +345,7 @@ public class Main {
         if (property != null && property.getSellerId() == seller.getUserId()) {
             propertyManager.deleteProperty(propertyId);
             seller.removeProperty(propertyId);
-            System.out.println("Property deleted successfully!");
+            System.out.println("RealEstateProperty.Property deleted successfully!");
         } else {
             System.out.println("Invalid property ID or you don't own this property.");
         }

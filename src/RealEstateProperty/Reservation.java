@@ -1,3 +1,5 @@
+package RealEstateProperty;
+
 import java.time.LocalDateTime;
 
 public class Reservation {
@@ -33,7 +35,7 @@ public class Reservation {
 
     @Override
     public String toString() {
-        return "Reservation{" +
+        return "RealEstateProperty.Reservation{" +
                 "reservationId=" + reservationId +
                 ", propertyId=" + propertyId +
                 ", buyerId=" + buyerId +

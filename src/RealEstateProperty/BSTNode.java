@@ -1,3 +1,5 @@
+package RealEstateProperty;
+
 public class BSTNode {
     private Property property;
     private BSTNode left;

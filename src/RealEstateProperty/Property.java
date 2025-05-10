@@ -1,3 +1,5 @@
+package RealEstateProperty;
+
 public class Property {
     private int propertyId;
     private String propertyName;
@@ -46,7 +48,7 @@ public class Property {
 
     @Override
     public String toString() {
-        return "Property{" +
+        return "RealEstateProperty.Property{" +
                 "id=" + propertyId +
                 ", name='" + propertyName + '\'' +
                 ", price=" + price +
