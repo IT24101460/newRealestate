@@ -141,26 +141,4 @@ public class Seller extends User {
         return filtered;
     }
 
-    // Filter properties by location
-    public List<Property> filterByLocation(String location) {
-        List<Property> filtered = new ArrayList<>();
-        for (Property property : properties) {
-            if (property.getLocation().equalsIgnoreCase(location)) {
-                filtered.add(property);
-            }
-        }
-        return filtered;
-    }
-
-    @Override
-    public String toString() {
-        return "Seller{" +
-                "userId=" + getUserId() +
-                ", username='" + getUsername() + '\'' +
-                ", name='" + getName() + '\'' +
-                ", email='" + getEmail() + '\'' +
-                ", phone='" + getPhone() + '\'' +
-                ", propertiesCount=" + properties.size() +
-                '}';
-    }
 }
