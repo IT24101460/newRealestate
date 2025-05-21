@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile - Real Estate Property Management</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --secondary-color: #3b82f6;
+            --dark-color: #1f2937;
+            --light-color: #f8fafc;
+            --success-color: #10b981;
+            --danger-color: #ef4444;
+            --warning-color: #f59e0b;
+            --info-color: #0dcaf0;
+            --sidebar-bg: #1f2937;
+            --sidebar-active: #2563eb;
+            --sidebar-hover: #23242a;
+            --sidebar-icon: #fff;
+            --sidebar-danger: #ef4444;
+            --sidebar-width: 260px;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--light-color);
+            min-height: 100vh;
+        }
+        /* Sidebar */
+        .sidebar {
+            background: var(--sidebar-bg);
+            color: var(--sidebar-icon);
+            min-height: 100vh;
+            height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: var(--sidebar-width);
+            z-index: 1030;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 2px 0 16px 0 rgba(37,99,235,0.08);
+        }
+        .sidebar .nav-link {
+            color: rgba(255,255,255,0.85);
+            padding: 0.85rem 1.2rem;
+            margin: 0.2rem 0;
+            border-radius: 0.6rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            transition: background 0.2s, color 0.2s;
+        }
+        .sidebar .nav-link i {
+            color: var(--sidebar-icon);
+            font-size: 1.2rem;
+            width: 1.7rem;
+            text-align: center;
+        }
+        .sidebar .nav-link.active, .sidebar .nav-link:focus {
+            background: var(--sidebar-active);
+            color: #fff;
+        }
+        .sidebar .nav-link.active i {
+            color: #fff;
+        }
+        .sidebar .nav-link:hover {
+            background: var(--sidebar-hover);
+            color: #fff;
+        }
+        .sidebar .nav-link.text-danger {
+            color: var(--sidebar-danger) !important;
+        }
+        .sidebar .nav-link.text-danger:hover {
+            background: rgba(239,68,68,0.12);
+            color: #fff !important;
+        }
+        .sidebar .sidebar-brand {
+            color: #fff;
+            font-size: 1.5rem;
+            font-weight: 700;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 2rem;
+            padding: 1.2rem 1.2rem 0.5rem 1.2rem;
+        }
+        /* Main Content */
+        .main-content {
+            margin-left: var(--sidebar-width);
+            padding: 2.5rem 2rem 2rem 2rem;
+        }
+        /* Profile Header */
+        .profile-header {
+            background: linear-gradient(120deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            border-radius: 1.5rem;
+            padding: 2.5rem;
+            color: white;
+            margin-bottom: 2.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+        .profile-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 300px;
+            height: 300px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            transform: translate(30%, -30%);
+        }
+        .profile-image {
+            width: 150px;
+            height: 150px;
+            border: 5px solid #fff;
+            border-radius: 50%;
+            object-fit: cover;
+            box-shadow: 0 0 0 6px rgba(255,255,255,0.2), 0 8px 32px rgba(37,99,235,0.18);
+        }
+        .card {
+            border-radius: 1.25rem;
+            box-shadow: 0 0.5rem 1.5rem rgba(37,99,235,0.07);
+            background: #fff;
+            overflow: hidden;
+            margin-bottom: 2rem;
+        }
+        .nav-pills .nav-link {
+            color: var(--dark-color);
+            border-radius: 2rem;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            padding: 0.8rem 1.2rem;
+        }
+        .nav-pills .nav-link.active {
+            background: linear-gradient(120deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            color: #fff;
+        }
+        @media (max-width: 991.98px) {
+            .sidebar {
+                width: 100%;
+                min-height: unset;
+                height: auto;
+                position: relative;
+                flex-direction: row;
+                box-shadow: none;
+            }
+            .sidebar .nav {
+                flex-direction: row;
+                width: 100%;
+                justify-content: space-around;
+            }
+            .main-content {
+                margin-left: 0;
+                padding: 1.2rem 0.5rem 1rem 0.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <nav class="sidebar">
+        <a href="../index.html" class="sidebar-brand">
+            <i class="fas fa-home"></i>
+            <span>RealEstate</span>
+        </a>
+        <ul class="nav flex-column">
+            <li class="nav-item">
+                <a class="nav-link" href="dashboard.html">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="properties.html">
+                    <i class="fas fa-building"></i>
+                    <span>Properties</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="reservations.html">
+                    <i class="fas fa-calendar-check"></i>
+                    <span>Reservations</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-danger" href="../index.html">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Profile Header -->
+        <div class="profile-header text-center">
+            <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Profile" class="profile-image mb-3">
+            <h2 id="userName">John Doe</h2>
+            <p class="mb-0">Premium Buyer Member</p>
+            <a href="settings.html" class="btn btn-light mt-3">
+                <i class="fas fa-cog me-2"></i>Account Settings
+            </a>
+        </div>
+
+        <!-- Profile Content -->
+        <div class="row">
+            <div class="col-md-3">
+                <div class="nav flex-column nav-pills" role="tablist">
+                    <button class="nav-link active" data-bs-toggle="pill" data-bs-target="#personal-info">
+                        <i class="fas fa-user me-2"></i>Personal Information
+                    </button>
+                    <button class="nav-link" data-bs-toggle="pill" data-bs-target="#account-settings">
+                        <i class="fas fa-cog me-2"></i>Account Settings
+                    </button>
+                    <button class="nav-link" data-bs-toggle="pill" data-bs-target="#security">
+                        <i class="fas fa-shield-alt me-2"></i>Security
+                    </button>
+                    <button class="nav-link" data-bs-toggle="pill" data-bs-target="#notifications">
+                        <i class="fas fa-bell me-2"></i>Notifications
+                    </button>
+                </div>
+            </div>
+            <div class="col-md-9">
+                <div class="tab-content">
+                    <!-- Personal Information -->
+                    <div class="tab-pane fade show active" id="personal-info">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title mb-4">Personal Information</h5>
+                                <form id="personalInfoForm">
+                                    <div class="row mb-3">
+                                        <div class="col-md-6">
+                                            <label class="form-label">First Name</label>
+                                            <input type="text" class="form-control" id="firstName">
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label">Last Name</label>
+                                            <input type="text" class="form-control" id="lastName">
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Email</label>
+                                        <input type="email" class="form-control" id="email">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Phone</label>
+                                        <input type="tel" class="form-control" id="phone">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Address</label>
+                                        <textarea class="form-control" id="address" rows="3"></textarea>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Bio</label>
+                                        <textarea class="form-control" id="bio" rows="4"></textarea>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Account Settings -->
+                    <div class="tab-pane fade" id="account-settings">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title mb-4">Account Settings</h5>
+                                <form id="accountSettingsForm">
+                                    <div class="mb-3">
+                                        <label class="form-label">Account Type</label>
+                                        <select class="form-select" id="accountType">
+                                            <option value="premium">Premium Buyer</option>
+                                            <option value="standard">Standard Buyer</option>
+                                        </select>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Language</label>
+                                        <select class="form-select" id="language">
+                                            <option value="en">English</option>
+                                            <option value="es">Spanish</option>
+                                            <option value="fr">French</option>
+                                        </select>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Time Zone</label>
+                                        <select class="form-select" id="timezone">
+                                            <option value="pst">Pacific Time (PST)</option>
+                                            <option value="est">Eastern Time (EST)</option>
+                                            <option value="gmt">Greenwich Mean Time (GMT)</option>
+                                        </select>
+                                    </div>
+                                    <div class="mb-3">
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input" type="checkbox" id="darkMode">
+                                            <label class="form-check-label" for="darkMode">Dark Mode</label>
+                                        </div>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary">Save Settings</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Security -->
+                    <div class="tab-pane fade" id="security">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title mb-4">Security Settings</h5>
+                                <form id="securityForm">
+                                    <div class="mb-3">
+                                        <label class="form-label">Current Password</label>
+                                        <input type="password" class="form-control" id="currentPassword">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">New Password</label>
+                                        <input type="password" class="form-control" id="newPassword">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Confirm New Password</label>
+                                        <input type="password" class="form-control" id="confirmPassword">
+                                    </div>
+                                    <div class="mb-3">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="2fa">
+                                            <label class="form-check-label" for="2fa">
+                                                Enable Two-Factor Authentication
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary">Update Security Settings</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Notifications -->
+                    <div class="tab-pane fade" id="notifications">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title mb-4">Notification Preferences</h5>
+                                <form id="notificationsForm">
+                                    <div class="mb-3">
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input" type="checkbox" id="emailNotif" checked>
+                                            <label class="form-check-label" for="emailNotif">Email Notifications</label>
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input" type="checkbox" id="smsNotif" checked>
+                                            <label class="form-check-label" for="smsNotif">SMS Notifications</label>
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input" type="checkbox" id="viewingRequest" checked>
+                                            <label class="form-check-label" for="viewingRequest">Viewing Requests</label>
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input" type="checkbox" id="inquiryNotif" checked>
+                                            <label class="form-check-label" for="inquiryNotif">Property Inquiries</label>
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input" type="checkbox" id="priceUpdate" checked>
+                                            <label class="form-check-label" for="priceUpdate">Price Updates</label>
+                                        </div>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary">Save Notification Settings</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Bootstrap 5 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Check if user is logged in and is a buyer
+        const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+        
+        if (!currentUser) {
+            window.location.href = '../login.html';
+        } else if (currentUser.accountType !== 'buyer') {
+            alert('Access denied. This page is for buyers only.');
+            window.location.href = '../login.html';
+            return;
+        }
+
+        // Display user information
+        document.getElementById('userName').textContent = `${currentUser.firstName} ${currentUser.lastName}`;
+        document.getElementById('firstName').value = currentUser.firstName;
+        document.getElementById('lastName').value = currentUser.lastName;
+        document.getElementById('email').value = currentUser.email;
+        document.getElementById('phone').value = currentUser.phone || '';
+
+        // Handle form submissions
+        document.getElementById('personalInfoForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            // Update user information in localStorage
+            currentUser.firstName = document.getElementById('firstName').value;
+            currentUser.lastName = document.getElementById('lastName').value;
+            currentUser.email = document.getElementById('email').value;
+            currentUser.phone = document.getElementById('phone').value;
+            currentUser.address = document.getElementById('address').value;
+            currentUser.bio = document.getElementById('bio').value;
+            
+            localStorage.setItem('currentUser', JSON.stringify(currentUser));
+            alert('Personal information updated successfully!');
+        });
+
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                localStorage.removeItem('currentUser');
+                window.location.href = '../index.html';
+            }
+        }
+    </script>
+</body>
+</html> 

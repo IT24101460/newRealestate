@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buyer Dashboard - Real Estate Property Management</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #4f46e5;
+            --secondary-color: #6366f1;
+            --dark-color: #1f2937;
+            --light-color: #f8fafc;
+            --success-color: #10b981;
+            --danger-color: #ef4444;
+            --warning-color: #f59e0b;
+            --info-color: #0dcaf0;
+            --sidebar-bg: #1f2937;
+            --sidebar-active: #4f46e5;
+            --sidebar-hover: #23242a;
+            --sidebar-icon: #fff;
+            --sidebar-danger: #ef4444;
+            --sidebar-width: 260px;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--light-color);
+            min-height: 100vh;
+        }
+        /* Sidebar */
+        .sidebar {
+            background: var(--sidebar-bg);
+            color: var(--sidebar-icon);
+            min-height: 100vh;
+            height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: var(--sidebar-width);
+            z-index: 1030;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 2px 0 16px 0 rgba(37,99,235,0.08);
+        }
+        .sidebar .nav-link {
+            color: rgba(255,255,255,0.85);
+            padding: 0.85rem 1.2rem;
+            margin: 0.2rem 0;
+            border-radius: 0.6rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            transition: background 0.2s, color 0.2s;
+        }
+        .sidebar .nav-link i {
+            color: var(--sidebar-icon);
+            font-size: 1.2rem;
+            width: 1.7rem;
+            text-align: center;
+        }
+        .sidebar .nav-link.active, .sidebar .nav-link:focus {
+            background: var(--sidebar-active);
+            color: #fff;
+        }
+        .sidebar .nav-link.active i {
+            color: #fff;
+        }
+        .sidebar .nav-link:hover {
+            background: var(--sidebar-hover);
+            color: #fff;
+        }
+        .sidebar .nav-link.text-danger {
+            color: var(--sidebar-danger) !important;
+        }
+        .sidebar .nav-link.text-danger:hover {
+            background: rgba(239,68,68,0.12);
+            color: #fff !important;
+        }
+        .sidebar .sidebar-brand {
+            color: #fff;
+            font-size: 1.5rem;
+            font-weight: 700;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 2rem;
+            padding: 1.2rem 1.2rem 0.5rem 1.2rem;
+        }
+        /* Main Content */
+        .main-content {
+            margin-left: var(--sidebar-width);
+            padding: 2.5rem 2rem 2rem 2rem;
+        }
+        /* Dashboard Header */
+        .dashboard-header {
+            background: linear-gradient(120deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            border-radius: 1.5rem;
+            padding: 2.5rem;
+            color: white;
+            margin-bottom: 2.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+        .dashboard-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 300px;
+            height: 300px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            transform: translate(30%, -30%);
+        }
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2.5rem;
+        }
+        .stat-card {
+            border-radius: 1.25rem;
+            box-shadow: 0 0.5rem 1.5rem rgba(37,99,235,0.10);
+            background: #fff;
+            color: var(--dark-color);
+            padding: 2rem 1.5rem 1.5rem 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1.2rem;
+            margin-bottom: 1.5rem;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .stat-card:hover {
+            transform: translateY(-4px) scale(1.01);
+            box-shadow: 0 1rem 2rem rgba(37,99,235,0.15);
+        }
+        .stat-card .icon {
+            font-size: 2.2rem;
+            background: rgba(37,99,235,0.08);
+            border-radius: 1rem;
+            padding: 0.8rem 1.1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .stat-card .card-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 0.2rem;
+        }
+        .stat-card .card-value {
+            font-size: 2.1rem;
+            font-weight: 700;
+        }
+        /* Property Cards */
+        .property-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border-radius: 1rem;
+            box-shadow: 0 0.5rem 1.5rem rgba(37,99,235,0.07);
+            background: #fff;
+            overflow: hidden;
+        }
+        .property-card:hover {
+            transform: translateY(-5px) scale(1.01);
+            box-shadow: 0 1rem 2rem rgba(37,99,235,0.12);
+        }
+        .card-img-top {
+            height: 200px;
+            object-fit: cover;
+            border-radius: 1rem 1rem 0 0;
+        }
+        .badge.bg-primary, .badge.bg-success, .badge.bg-info {
+            font-size: 0.95rem;
+            padding: 0.5em 1em;
+            border-radius: 0.75rem;
+        }
+        @media (max-width: 991.98px) {
+            .sidebar {
+                width: 100%;
+                min-height: unset;
+                height: auto;
+                position: relative;
+                flex-direction: row;
+                box-shadow: none;
+            }
+            .sidebar .nav {
+                flex-direction: row;
+                width: 100%;
+                justify-content: space-around;
+            }
+            .main-content {
+                margin-left: 0;
+                padding: 1.2rem 0.5rem 1rem 0.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <a href="dashboard.html" class="sidebar-brand">
+            <i class="fas fa-home"></i>
+            <span>Buyer Dashboard</span>
+        </a>
+        <ul class="nav flex-column">
+            <li class="nav-item">
+                <a class="nav-link active" href="dashboard.html">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="properties.html">
+                    <i class="fas fa-building"></i>
+                    <span>Properties</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="reservations.html">
+                    <i class="fas fa-calendar-check"></i>
+                    <span>Reservations</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-danger" href="../index.html">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Dashboard Header -->
+        <div class="dashboard-header">
+            <h1 class="h3 mb-2">Welcome back, <span id="userWelcome"></span>!</h1>
+            <p class="mb-0">Here's what's happening with your property search.</p>
+        </div>
+
+        <!-- Stats Grid -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="icon text-primary">
+                    <i class="fas fa-home"></i>
+                </div>
+                <div>
+                    <div class="card-title">Saved Properties</div>
+                    <div class="card-value">12</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="icon text-success">
+                    <i class="fas fa-calendar-check"></i>
+                </div>
+                <div>
+                    <div class="card-title">Upcoming Viewings</div>
+                    <div class="card-value">3</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="icon text-warning">
+                    <i class="fas fa-bell"></i>
+                </div>
+                <div>
+                    <div class="card-title">New Alerts</div>
+                    <div class="card-value">5</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Available Properties -->
+        <div class="row g-4">
+            <div class="col-12 d-flex justify-content-between align-items-center">
+                <h4 class="mb-4">Available Properties</h4>
+                <div class="d-flex gap-2">
+                    <select class="form-select" id="propertyType" onchange="filterProperties()">
+                        <option value="">All Types</option>
+                        <option value="HOUSE">House</option>
+                        <option value="APARTMENT">Apartment</option>
+                        <option value="CONDO">Condo</option>
+                        <option value="VILLA">Villa</option>
+                    </select>
+                    <select class="form-select" id="sortBy" onchange="filterProperties()">
+                        <option value="price_asc">Price: Low to High</option>
+                        <option value="price_desc">Price: High to Low</option>
+                        <option value="date_desc">Newest First</option>
+                    </select>
+                </div>
+            </div>
+            <div id="propertiesContainer" class="row g-4">
+                <!-- Properties will be loaded here -->
+            </div>
+        </div>
+    </main>
+
+    <!-- Bootstrap 5 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../js/script.js"></script>
+    <script>
+        // Check if user is logged in and is a buyer
+        const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+        
+        if (!currentUser) {
+            window.location.href = '../login.html';
+        } else if (currentUser.accountType !== 'buyer') {
+            alert('Access denied. This page is for buyers only.');
+            window.location.href = '../login.html';
+            return;
+        }
+
+        // Display user information
+        document.getElementById('userWelcome').textContent = currentUser.firstName;
+
+        // Function to load all properties
+        async function loadProperties() {
+            try {
+                const response = await fetch('http://localhost:8080/api/properties');
+                const properties = await response.json();
+                displayProperties(properties);
+            } catch (error) {
+                console.error('Error loading properties:', error);
+                alert('Error loading properties. Please try again.');
+            }
+        }
+
+        // Function to display properties
+        function displayProperties(properties) {
+            const container = document.getElementById('propertiesContainer');
+            container.innerHTML = '';
+
+            properties.forEach(property => {
+                const col = document.createElement('div');
+                col.className = 'col-md-6 col-lg-4';
+                col.innerHTML = `
+                    <div class="property-card">
+                        <img src="${property.imageUrl || 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=400&q=80'}" 
+                             class="card-img-top" alt="${property.title}">
+                        <div class="card-body">
+                            <h5 class="card-title">${property.title}</h5>
+                            <p class="card-text text-muted">${property.location}</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="h5 mb-0">$${property.price.toLocaleString()}</span>
+                                <button class="btn btn-outline-primary" onclick="viewProperty(${property.id})">View Details</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(col);
+            });
+        }
+
+        // Function to filter properties
+        function filterProperties() {
+            const type = document.getElementById('propertyType').value;
+            const sortBy = document.getElementById('sortBy').value;
+            
+            fetch('http://localhost:8080/api/properties')
+                .then(response => response.json())
+                .then(properties => {
+                    // Filter by type if selected
+                    let filtered = properties;
+                    if (type) {
+                        filtered = properties.filter(p => p.type === type);
+                    }
+
+                    // Sort properties
+                    filtered.sort((a, b) => {
+                        switch (sortBy) {
+                            case 'price_asc':
+                                return a.price - b.price;
+                            case 'price_desc':
+                                return b.price - a.price;
+                            case 'date_desc':
+                                return new Date(b.createdAt) - new Date(a.createdAt);
+                            default:
+                                return 0;
+                        }
+                    });
+
+                    displayProperties(filtered);
+                })
+                .catch(error => {
+                    console.error('Error filtering properties:', error);
+                    alert('Error filtering properties. Please try again.');
+                });
+        }
+
+        // Function to view property details
+        function viewProperty(propertyId) {
+            window.location.href = `property-details.html?id=${propertyId}`;
+        }
+
+        // Load properties when the page loads
+        document.addEventListener('DOMContentLoaded', loadProperties);
+    </script>
+</body>
+</html>
