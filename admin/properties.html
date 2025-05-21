@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - Property Management</title>
+    <link rel="stylesheet" href="css/admin.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <nav class="col-md-3 col-lg-2 d-md-block bg-dark sidebar">
+                <div class="position-sticky pt-3">
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link text-white" href="users.html">
+                                Users
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active text-white" href="properties.html">
+                                Properties
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-white" href="reservations.html">
+                                Reservations
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+
+            <!-- Main content -->
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                    <h1 class="h2">Property Management</h1>
+                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addPropertyModal">
+                        Add New Property
+                    </button>
+                </div>
+
+                <!-- Properties Table -->
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Title</th>
+                                <th>Location</th>
+                                <th>Price</th>
+                                <th>Type</th>
+                                <th>Owner</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="propertiesTableBody">
+                            <!-- Properties will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Add Property Modal -->
+    <div class="modal fade" id="addPropertyModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add New Property</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="addPropertyForm">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="title" class="form-label">Title</label>
+                                <input type="text" class="form-control" id="title" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="location" class="form-label">Location</label>
+                                <input type="text" class="form-control" id="location" required>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="price" class="form-label">Price</label>
+                                <input type="number" class="form-control" id="price" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="type" class="form-label">Type</label>
+                                <select class="form-select" id="type" required>
+                                    <option value="HOUSE">House</option>
+                                    <option value="APARTMENT">Apartment</option>
+                                    <option value="CONDO">Condo</option>
+                                    <option value="VILLA">Villa</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Description</label>
+                            <textarea class="form-control" id="description" rows="3" required></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="imageUrl" class="form-label">Image URL</label>
+                            <input type="url" class="form-control" id="imageUrl" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="ownerId" class="form-label">Owner</label>
+                            <select class="form-select" id="ownerId" required>
+                                <!-- Owner options will be loaded here -->
+                            </select>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onclick="addProperty()">Add Property</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Property Modal -->
+    <div class="modal fade" id="editPropertyModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit Property</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editPropertyForm">
+                        <input type="hidden" id="editPropertyId">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="editTitle" class="form-label">Title</label>
+                                <input type="text" class="form-control" id="editTitle" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="editLocation" class="form-label">Location</label>
+                                <input type="text" class="form-control" id="editLocation" required>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="editPrice" class="form-label">Price</label>
+                                <input type="number" class="form-control" id="editPrice" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="editType" class="form-label">Type</label>
+                                <select class="form-select" id="editType" required>
+                                    <option value="HOUSE">House</option>
+                                    <option value="APARTMENT">Apartment</option>
+                                    <option value="CONDO">Condo</option>
+                                    <option value="VILLA">Villa</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editDescription" class="form-label">Description</label>
+                            <textarea class="form-control" id="editDescription" rows="3" required></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editImageUrl" class="form-label">Image URL</label>
+                            <input type="url" class="form-control" id="editImageUrl" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editOwnerId" class="form-label">Owner</label>
+                            <select class="form-select" id="editOwnerId" required>
+                                <!-- Owner options will be loaded here -->
+                            </select>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onclick="updateProperty()">Save Changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // API endpoints
+        const API_BASE_URL = 'http://localhost:8080/api';
+        const PROPERTIES_ENDPOINT = `${API_BASE_URL}/properties`;
+        const USERS_ENDPOINT = `${API_BASE_URL}/users`;
+
+        // Load properties when the page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            loadProperties();
+            loadOwners();
+        });
+
+        // Function to load all properties
+        async function loadProperties() {
+            try {
+                const response = await fetch(PROPERTIES_ENDPOINT);
+                const properties = await response.json();
+                displayProperties(properties);
+            } catch (error) {
+                console.error('Error loading properties:', error);
+                alert('Error loading properties. Please try again.');
+            }
+        }
+
+        // Function to load property owners
+        async function loadOwners() {
+            try {
+                const response = await fetch(USERS_ENDPOINT);
+                const users = await response.json();
+                const sellers = users.filter(user => user.role === 'SELLER');
+                
+                const ownerSelects = ['ownerId', 'editOwnerId'];
+                ownerSelects.forEach(selectId => {
+                    const select = document.getElementById(selectId);
+                    select.innerHTML = sellers.map(seller => 
+                        `<option value="${seller.id}">${seller.username}</option>`
+                    ).join('');
+                });
+            } catch (error) {
+                console.error('Error loading owners:', error);
+                alert('Error loading property owners. Please try again.');
+            }
+        }
+
+        // Function to display properties in the table
+        function displayProperties(properties) {
+            const tableBody = document.getElementById('propertiesTableBody');
+            tableBody.innerHTML = '';
+
+            properties.forEach(property => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${property.id}</td>
+                    <td>${property.title}</td>
+                    <td>${property.location}</td>
+                    <td>$${property.price.toLocaleString()}</td>
+                    <td>${property.type}</td>
+                    <td>${property.ownerName || 'N/A'}</td>
+                    <td>
+                        <span class="badge ${property.available ? 'bg-success' : 'bg-danger'}">
+                            ${property.available ? 'Available' : 'Not Available'}
+                        </span>
+                    </td>
+                    <td>
+                        <button class="btn btn-sm btn-info btn-action" onclick="editProperty(${property.id})">Edit</button>
+                        <button class="btn btn-sm btn-danger btn-action" onclick="deleteProperty(${property.id})">Delete</button>
+                    </td>
+                `;
+                tableBody.appendChild(row);
+            });
+        }
+
+        // Function to add a new property
+        async function addProperty() {
+            const propertyData = {
+                title: document.getElementById('title').value,
+                location: document.getElementById('location').value,
+                price: document.getElementById('price').value,
+                type: document.getElementById('type').value,
+                description: document.getElementById('description').value,
+                imageUrl: document.getElementById('imageUrl').value,
+                ownerId: document.getElementById('ownerId').value,
+                available: true
+            };
+
+            try {
+                const response = await fetch(PROPERTIES_ENDPOINT, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(propertyData)
+                });
+
+                if (response.ok) {
+                    // Close modal and refresh property list
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('addPropertyModal'));
+                    modal.hide();
+                    document.getElementById('addPropertyForm').reset();
+                    loadProperties();
+                } else {
+                    throw new Error('Failed to add property');
+                }
+            } catch (error) {
+                console.error('Error adding property:', error);
+                alert('Error adding property. Please try again.');
+            }
+        }
+
+        // Function to edit a property
+        async function editProperty(propertyId) {
+            try {
+                const response = await fetch(`${PROPERTIES_ENDPOINT}/${propertyId}`);
+                const property = await response.json();
+
+                // Fill the edit form with property data
+                document.getElementById('editPropertyId').value = property.id;
+                document.getElementById('editTitle').value = property.title;
+                document.getElementById('editLocation').value = property.location;
+                document.getElementById('editPrice').value = property.price;
+                document.getElementById('editType').value = property.type;
+                document.getElementById('editDescription').value = property.description;
+                document.getElementById('editImageUrl').value = property.imageUrl;
+                document.getElementById('editOwnerId').value = property.ownerId;
+
+                // Show the edit modal
+                const modal = new bootstrap.Modal(document.getElementById('editPropertyModal'));
+                modal.show();
+            } catch (error) {
+                console.error('Error loading property details:', error);
+                alert('Error loading property details. Please try again.');
+            }
+        }
+
+        // Function to update a property
+        async function updateProperty() {
+            const propertyId = document.getElementById('editPropertyId').value;
+            const propertyData = {
+                title: document.getElementById('editTitle').value,
+                location: document.getElementById('editLocation').value,
+                price: document.getElementById('editPrice').value,
+                type: document.getElementById('editType').value,
+                description: document.getElementById('editDescription').value,
+                imageUrl: document.getElementById('editImageUrl').value,
+                ownerId: document.getElementById('editOwnerId').value,
+                available: document.getElementById('editAvailable').checked
+            };
+
+            try {
+                const response = await fetch(`${PROPERTIES_ENDPOINT}/${propertyId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(propertyData)
+                });
+
+                if (response.ok) {
+                    // Close modal and refresh property list
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('editPropertyModal'));
+                    modal.hide();
+                    loadProperties();
+                } else {
+                    throw new Error('Failed to update property');
+                }
+            } catch (error) {
+                console.error('Error updating property:', error);
+                alert('Error updating property. Please try again.');
+            }
+        }
+
+        // Function to delete a property
+        async function deleteProperty(propertyId) {
+            if (!confirm('Are you sure you want to delete this property?')) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`${PROPERTIES_ENDPOINT}/${propertyId}`, {
+                    method: 'DELETE'
+                });
+
+                if (response.ok) {
+                    loadProperties();
+                } else {
+                    throw new Error('Failed to delete property');
+                }
+            } catch (error) {
+                console.error('Error deleting property:', error);
+                alert('Error deleting property. Please try again.');
+            }
+        }
+    </script>
+</body>
+</html> 
