@@ -17,7 +17,7 @@ public class ReservationController {
     private ReservationService reservationService;
 
     // Creates a new reservation
-    //  POST /reservations
+    
     @PostMapping
     public ResponseEntity<Reservation> addReservation(
             @RequestParam String propertyId,
@@ -27,7 +27,7 @@ public class ReservationController {
     }
 
     // reservations by buyer ID
-    //GET /reservations/buyer/{buyerId}
+   
     @GetMapping("/buyer/{buyerId}")
     public ResponseEntity<List<Reservation>> getReservationsByBuyerId(@PathVariable String buyerId) throws IOException {
         List<Reservation> reservations = reservationService.getReservationsByBuyerId(buyerId);
@@ -35,7 +35,7 @@ public class ReservationController {
     }
 
     //  reservations by property ID
-    //  GET /reservations/property/{propertyId}
+   
     @GetMapping("/property/{propertyId}")
     public ResponseEntity<List<Reservation>> getReservationsByPropertyId(@PathVariable String propertyId) throws IOException {
         List<Reservation> reservations = reservationService.getReservationsByPropertyId(propertyId);
