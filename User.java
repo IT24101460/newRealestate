@@ -53,12 +53,12 @@ public abstract class User {
         this.role = role;
     }
 
-    // Convert user to pipe-delimited string for file storage
+    
     public String toDataString() {
         return userId + "|" + name + "|" + email + "|" + password + "|" + role;
     }
 
-    // Parse user from pipe-delimited string read from file
+   
     public static User fromDataString(String data) {
         String[] parts = data.split("\\|");
         if (parts.length == 5) {
@@ -75,7 +75,7 @@ public abstract class User {
             user.setRole(parts[4]);
             return user;
         }
-        return null; // Return null if data format is incorrect
+        return null; // Return null
     }
 
     @Override
