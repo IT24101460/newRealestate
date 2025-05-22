@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Properties - Real Estate Portal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/seller.css">
+</head>
+<body>
+<div class="container">
+    <h1>Manage Properties</h1>
+
+    <!-- Navigation -->
+    <div class="nav-links">
+        <a href="/seller/profile.html">Profile</a>
+        <a href="/seller/manage-properties.html">Manage Properties</a>
+        <a href="#" onclick="logout()">Logout</a>
+    </div>
+
+    <!-- Add Property Form -->
+    <div class="property-form">
+        <h2>Add New Property</h2>
+        <form id="propertyForm">
+            <div class="form-group">
+                <label for="title">Title:</label>
+                <input type="text" id="title" required placeholder="Enter property title">
+            </div>
+            <div class="form-group">
+                <label for="location">Location:</label>
+                <input type="text" id="location" required placeholder="Enter property location">
+            </div>
+            <div class="form-group">
+                <label for="price">Price ($):</label>
+                <input type="number" id="price" required placeholder="Enter property price">
+            </div>
+            <div class="form-group">
+                <label for="description">Description:</label>
+                <textarea id="description" required placeholder="Enter property description"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="imageUrl">Image URL:</label>
+                <input type="text" id="imageUrl" required placeholder="Enter image URL">
+            </div>
+            <button type="submit">Add Property</button>
+        </form>
+    </div>
+
+    <!-- Properties Section -->
+    <div class="properties-section">
+        <h3>Your Properties</h3>
+        <div id="propertiesTable" class="properties-table">
+            <!-- Properties will be dynamically loaded here via JavaScript -->
+            <p>Loading properties...</p>
+        </div>
+    </div>
+</div>
+
+<script src="/js/seller.js"></script>
+<script>
+    // On page load, check if seller is logged in and load properties
+    document.addEventListener('DOMContentLoaded', function() {
+        loadSellerInfo();
+        loadProperties();
+        document.getElementById('propertyForm').addEventListener('submit', addProperty);
+    });
+
+    function loadSellerInfo() {
+        const user = JSON.parse(localStorage.getItem('currentUser'));
+        if (!user || user.role !== 'SELLER') {
+            alert('Please log in as Seller to access this page.');
+            window.location.href = '/login.html';
+        }
+    }
+
+    function loadProperties() {
+        const user = JSON.parse(localStorage.getItem('currentUser'));
+        if (!user || user.role !== 'SELLER') return;
+
+        fetch(`/properties/seller/${user.userId}`)
+            .then(response => {
+                if (response.ok) {
+                    return response.json();
+                } else {
+                    throw new Error('Failed to load properties');
+                }
+            })
+            .then(properties => {
+                const propertiesTable = document.getElementById('propertiesTable');
+                propertiesTable.innerHTML = ''; // Clear loading message
+                if (properties.length === 0) {
+                    propertiesTable.innerHTML = '<p>No properties listed yet.</p>';
+                    return;
+                }
+                const table = document.createElement('table');
+                table.innerHTML = `
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Title</th>
+                                <th>Location</th>
+                                <th>Price</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    `;
+                const tbody = table.querySelector('tbody');
+                properties.forEach(property => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                            <td>${property.propertyId}</td>
+                            <td>${property.title}</td>
+                            <td>${property.location}</td>
+                            <td>$${property.price.toLocaleString()}</td>
+                            <td>
+                                <button class="edit" onclick="editProperty('${property.propertyId}')">Edit</button>
+                                <button class="delete" onclick="deleteProperty('${property.propertyId}')">Delete</button>
+                            </td>
+                        `;
+                    tbody.appendChild(row);
+                });
+                propertiesTable.appendChild(table);
+            })
+            .catch(error => {
+                console.error('Error loading properties:', error);
+                document.getElementById('propertiesTable').innerHTML = '<p>Error loading properties. Please try again later.</p>';
+            });
+    }
+
+    function addProperty(event) {
+        event.preventDefault();
+        const user = JSON.parse(localStorage.getItem('currentUser'));
+        if (!user || user.role !== 'SELLER') return;
+
+        const title = document.getElementById('title').value;
+        const location = document.getElementById('location').value;
+        const price = parseFloat(document.getElementById('price').value);
+        const description = document.getElementById('description').value;
+        const imageUrl = document.getElementById('imageUrl').value;
+
+        fetch('/properties', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: new URLSearchParams({
+                title: title,
+                location: location,
+                price: price,
+                description: description,
+                sellerId: user.userId,
+                imageUrl: imageUrl
+            })
+        })
+            .then(response => {
+                if (response.ok) {
+                    return response.json();
+                } else {
+                    throw new Error('Failed to add property');
+                }
+            })
+            .then(property => {
+                alert('Property added successfully!');
+                document.getElementById('propertyForm').reset();
+                loadProperties(); // Reload the property list
+            })
+            .catch(error => {
+                console.error('Error adding property:', error);
+                alert('Error adding property. Please try again.');
+            });
+    }
+
+    function editProperty(propertyId) {
+        alert('Edit functionality is not implemented yet. Property ID: ' + propertyId);
+        // Future implementation: Fetch property details and populate form for editing
+    }
+
+    function deleteProperty(propertyId) {
+        if (confirm('Are you sure you want to delete this property?')) {
+            fetch(`/properties/${propertyId}`, {
+                method: 'DELETE'
+            })
+                .then(response => {
+                    if (response.ok) {
+                        alert('Property deleted successfully.');
+                        loadProperties(); // Reload the property list
+                    } else {
+                        throw new Error('Failed to delete property');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error deleting property:', error);
+                    alert('Error deleting property. Please try again.');
+                });
+        }
+    }
+
+    function logout() {
+        localStorage.removeItem('currentUser');
+        alert('Logged out successfully.');
+        window.location.href = '/login.html';
+    }
+</script>
+</body>
+</html>
