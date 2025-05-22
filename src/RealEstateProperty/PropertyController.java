@@ -16,7 +16,7 @@ public class PropertyController {
     @Autowired
     private PropertyService propertyService;
 
-    // CREATE Operation: Adds a new property
+    // CREATE : Adds a new property
     // Endpoint: POST /properties
     @PostMapping
     public ResponseEntity<Property> addProperty(
