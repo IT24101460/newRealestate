@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buyer Dashboard - Real Estate Portal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/buyer.css">
+</head>
+<body>
+<div class="container">
+    <h1>Buyer Dashboard</h1>
+
+    <!-- Navigation -->
+    <div class="nav-links">
+        <a href="/buyer/dashboard.html">Home</a>
+        <a href="/buyer/profile.html">Profile</a>
+        <a href="/buyer/submit-review.html">Submit Review</a>
+        <a href="#" onclick="logout()">Logout</a>
+    </div>
+
+    <!-- Welcome Message -->
+    <div class="welcome-message">
+        <h2>Welcome, <span id="buyerName">Buyer</span>!</h2>
+        <p>Browse available properties below.</p>
+    </div>
+
+    <!-- Properties Section -->
+    <div class="properties-section">
+        <h3>Available Properties</h3>
+        <div id="propertiesGrid" class="properties-grid">
+            <!-- Properties will be dynamically loaded here via JavaScript -->
+            <p>Loading properties...</p>
+        </div>
+    </div>
+</div>
+
+<script src="/js/buyer.js"></script>
+<script>
+    // On page load, check if buyer is logged in and load properties
+    document.addEventListener('DOMContentLoaded', function() {
+        loadBuyerInfo();
+        loadProperties();
+    });
+
+    function loadBuyerInfo() {
+        const user = JSON.parse(localStorage.getItem('currentUser'));
+        if (user && user.role === 'BUYER') {
+            document.getElementById('buyerName').textContent = user.name || 'Buyer';
+        } else {
+            alert('Please log in as Buyer to access this page.');
+            window.location.href = '/login.html';
+        }
+    }
+
+    function loadProperties() {
+        fetch('/properties')
+            .then(response => {
+                if (response.ok) {
+                    return response.json();
+                } else {
+                    throw new Error('Failed to load properties');
+                }
+            })
+            .then(properties => {
+                const propertiesGrid = document.getElementById('propertiesGrid');
+                propertiesGrid.innerHTML = ''; // Clear loading message
+                if (properties.length === 0) {
+                    propertiesGrid.innerHTML = '<p>No properties available at the moment.</p>';
+                    return;
+                }
+                properties.forEach(property => {
+                    const card = document.createElement('div');
+                    card.className = 'property-card';
+                    card.innerHTML = `
+                            <img src="${property.imageUrl}" alt="${property.title}" onerror="this.src='https://via.placeholder.com/300x200?text=No+Image'">
+                            <h4>${property.title}</h4>
+                            <p>Location: ${property.location}</p>
+                            <p>Price: $${property.price.toLocaleString()}</p>
+                            <p>${property.description.slice(0, 100)}...</p>
+                            <button onclick="makeReservation('${property.propertyId}')">Reserve</button>
+                        `;
+                    propertiesGrid.appendChild(card);
+                });
+            })
+            .catch(error => {
+                console.error('Error loading properties:', error);
+                document.getElementById('propertiesGrid').innerHTML = '<p>Error loading properties. Please try again later.</p>';
+            });
+    }
+
+    function makeReservation(propertyId) {
+        const user = JSON.parse(localStorage.getItem('currentUser'));
+        if (!user || user.role !== 'BUYER') {
+            alert('Please log in as Buyer to make a reservation.');
+            window.location.href = '/login.html';
+            return;
+        }
+        fetch('/reservations', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: new URLSearchParams({
+                propertyId: propertyId,
+                buyerId: user.userId
+            })
+        })
+            .then(response => {
+                if (response.ok) {
+                    return response.json();
+                } else {
+                    throw new Error('Failed to make reservation');
+                }
+            })
+            .then(reservation => {
+                alert('Reservation made successfully! Status: ' + reservation.status);
+                window.location.href = '/buyer/reservation.html';
+            })
+            .catch(error => {
+                console.error('Error making reservation:', error);
+                alert('Error making reservation. Please try again.');
+            });
+    }
+
+    function logout() {
+        localStorage.removeItem('currentUser');
+        alert('Logged out successfully.');
+        window.location.href = '/login.html';
+    }
+</script>
+</body>
+</html>

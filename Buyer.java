@@ -1,25 +1,14 @@
-package com.example.propertymanagement.model;
+package com.realestate.model;
 
 public class Buyer extends User {
 
-    // Constructors
+    public Buyer(String userId, String name, String email, String password) {
+        super(userId, name, email, password, "BUYER");
+    }
+
+    
     public Buyer() {
         super();
-        this.role = "BUYER";
-    }
-
-    public Buyer(String id, String username, String email) {
-        super(id, username, email);
-        this.role = "BUYER";
-    }
-
-    @Override
-    public String toString() {
-        return "Buyer{" +
-                "id='" + id + '\'' +
-                ", username='" + username + '\'' +
-                ", email='" + email + '\'' +
-                ", role='" + role + '\'' +
-                '}';
+        setRole("BUYER");
     }
 }

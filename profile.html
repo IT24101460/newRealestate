@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buyer Profile - Real Estate Portal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/buyer.css">
+</head>
+<body>
+<div class="container">
+    <h1>Buyer Profile</h1>
+
+    <!-- Navigation -->
+    <div class="nav-links">
+        <a href="/buyer/dashboard.html">Home</a>
+        <a href="/buyer/profile.html">Profile</a>
+        <a href="/buyer/submit-review.html">Submit Review</a>
+        <a href="#" onclick="logout()">Logout</a>
+    </div>
+
+    <!-- Profile Section -->
+    <div class="profile-section">
+        <h2>Profile Information</h2>
+        <p><strong>Name:</strong> <span id="buyerName">Loading...</span></p>
+        <p><strong>Email:</strong> <span id="buyerEmail">Loading...</span></p>
+        <p><strong>User ID:</strong> <span id="buyerId">Loading...</span></p>
+    </div>
+
+    <!-- Reservations Section -->
+    <div class="properties-section">
+        <h3>Your Reservations</h3>
+        <div id="reservationsList" class="properties-table">
+            <!-- Reservations will be dynamically loaded here via JavaScript -->
+            <p>Loading reservations...</p>
+        </div>
+    </div>
+</div>
+
+<script src="/js/buyer.js"></script>
+<script>
+    // On page load, check if buyer is logged in and load profile and reservations
+    document.addEventListener('DOMContentLoaded', function() {
+        loadBuyerInfo();
+        loadReservations();
+    });
+
+    function loadBuyerInfo() {
+        const user = JSON.parse(localStorage.getItem('currentUser'));
+        if (user && user.role === 'BUYER') {
+            document.getElementById('buyerName').textContent = user.name || 'N/A';
+            document.getElementById('buyerEmail').textContent = user.email || 'N/A';
+            document.getElementById('buyerId').textContent = user.userId || 'N/A';
+        } else {
+            alert('Please log in as Buyer to access this page.');
+            window.location.href = '/login.html';
+        }
+    }
+
+    function loadReservations() {
+        const user = JSON.parse(localStorage.getItem('currentUser'));
+        if (!user || user.role !== 'BUYER') return;
+
+        fetch(`/reservations/buyer/${user.userId}`)
+            .then(response => {
+                if (response.ok) {
+                    return response.json();
+                } else {
+                    throw new Error('Failed to load reservations');
+                }
+            })
+            .then(reservations => {
+                const reservationsList = document.getElementById('reservationsList');
+                reservationsList.innerHTML = ''; // Clear loading message
+                if (reservations.length === 0) {
+                    reservationsList.innerHTML = '<p>No reservations found.</p>';
+                    return;
+                }
+                const table = document.createElement('table');
+                table.innerHTML = `
+                        <thead>
+                            <tr>
+                                <th>Reservation ID</th>
+                                <th>Property ID</th>
+                                <th>Date</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    `;
+                const tbody = table.querySelector('tbody');
+                reservations.forEach(reservation => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                            <td>${reservation.reservationId}</td>
+                            <td>${reservation.propertyId}</td>
+                            <td>${reservation.reservationDate}</td>
+                            <td>${reservation.status}</td>
+                        `;
+                    tbody.appendChild(row);
+                });
+                reservationsList.appendChild(table);
+            })
+            .catch(error => {
+                console.error('Error loading reservations:', error);
+                document.getElementById('reservationsList').innerHTML = '<p>Error loading reservations. Please try again later.</p>';
+            });
+    }
+
+    function logout() {
+        localStorage.removeItem('currentUser');
+        alert('Logged out successfully.');
+        window.location.href = '/login.html';
+    }
+</script>
+</body>
+</html>
