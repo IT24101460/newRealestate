@@ -1,0 +1,9 @@
+B1234567|John Doe|john.doe@example.com|password123|BUYER
+S1234567|Jane Smith|jane.smith@example.com|password456|SELLER
+A1234567|Admin User|admin@example.com|adminpass|ADMIN
+S3390317|chathuranga|never@gmail.com|1234|SELLER
+S4cc993a|nayanajith|neverseller@gmail.com|1234|SELLER
+B8884e46|chathuranganr|ghghgh@gmail.com|1234|BUYER
+Scb1fb2a|prabuddha|prabuddhajayasinghe541@gmail.ccom|1234|SELLER
+S2e977fe|thamu|thamu@gmail.com|1234|SELLER
+B6b1de8f|bnh|neverbuyer@gmail.com|1234|BUYER
