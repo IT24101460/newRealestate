@@ -1,62 +1,78 @@
-package RealEstateProperty;
+package com.realestate.model;
 
 public class Property {
-    private int propertyId;
-    private String propertyName;
-    private double price;
-    private String location;
-    private String type;
-    private String status; // Available, Sold, Reserved
-    private int sellerId;
-    private String description; // New attribute for property description
+    private String propertyId; // Unique identifier for the property
+    private String title; // Property title or name
+    private String location; // Property location
+    private double price; // Property price
+    private String description; // Property description
+    private String sellerId; // ID of the seller
+    private String imageUrl; // URL for property image
 
-    public Property(int propertyId, String propertyName, double price, String location, String type, int sellerId) {
+    // Create new property using constructor
+    public Property(String propertyId, String title, String location, double price, String description, String sellerId, String imageUrl) {
         this.propertyId = propertyId;
-        this.propertyName = propertyName;
-        this.price = price;
+        this.title = title;
         this.location = location;
-        this.type = type;
-        this.status = "Available";
+        this.price = price;
+        this.description = description;
         this.sellerId = sellerId;
-        this.description = ""; // Initialize with empty description
+        this.imageUrl = imageUrl;
+    }
+
+    // Default constructor
+    public Property() {
     }
 
     // Getters and Setters
-    public int getPropertyId() { return propertyId; }
-    public void setPropertyId(int propertyId) { this.propertyId = propertyId; }
-
-    public String getPropertyName() { return propertyName; }
-    public void setPropertyName(String propertyName) { this.propertyName = propertyName; }
-
-    public double getPrice() { return price; }
-    public void setPrice(double price) { this.price = price; }
-
+    public String getPropertyId() { return propertyId; }
+    public void setPropertyId(String propertyId) { this.propertyId = propertyId; }
+    public String getTitle() { return title; }
+    public void setTitle(String title) { this.title = title; }
     public String getLocation() { return location; }
     public void setLocation(String location) { this.location = location; }
-
-    public String getType() { return type; }
-    public void setType(String type) { this.type = type; }
-
-    public String getStatus() { return status; }
-    public void setStatus(String status) { this.status = status; }
-
-    public int getSellerId() { return sellerId; }
-    public void setSellerId(int sellerId) { this.sellerId = sellerId; }
-
+    public double getPrice() { return price; }
+    public void setPrice(double price) { this.price = price; }
     public String getDescription() { return description; }
     public void setDescription(String description) { this.description = description; }
+    public String getSellerId() { return sellerId; }
+    public void setSellerId(String sellerId) { this.sellerId = sellerId; }
+    public String getImageUrl() { return imageUrl; }
+    public void setImageUrl(String imageUrl) { this.imageUrl = imageUrl; }
+
+    // Convert property to String with space
+    public String toDataString() {
+        return propertyId + "|" + title + "|" + location + "|" + price + "|" + description + "|" + sellerId + "|" + imageUrl;
+    }
+
+    // Parse property from pipe-delimited string read from file
+    public static Property fromDataString(String data) {
+        String[] parts = data.split("\\|");
+        if (parts.length == 7) {
+            Property property = new Property();
+            property.setPropertyId(parts[0]);
+            property.setTitle(parts[1]);
+            property.setLocation(parts[2]);
+            try {
+                property.setPrice(Double.parseDouble(parts[3]));
+            } catch (NumberFormatException e) {
+                property.setPrice(0.0);
+            }
+            property.setDescription(parts[4]);
+            property.setSellerId(parts[5]);
+            property.setImageUrl(parts[6]);
+            return property;
+        }
+        return null; // Return null if data format is incorrect
+    }
 
     @Override
     public String toString() {
-        return "RealEstateProperty.Property{" +
-                "id=" + propertyId +
-                ", name='" + propertyName + '\'' +
-                ", price=" + price +
+        return "Property{" +
+                "propertyId='" + propertyId + '\'' +
+                ", title='" + title + '\'' +
                 ", location='" + location + '\'' +
-                ", type='" + type + '\'' +
-                ", status='" + status + '\'' +
-                ", sellerId=" + sellerId +
-                ", description='" + description + '\'' +
+                ", price=" + price +
                 '}';
     }
 }
