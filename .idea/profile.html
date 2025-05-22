@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seller Profile - Real Estate Portal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/seller.css">
+</head>
+<body>
+<div class="container">
+    <h1>Seller Profile</h1>
+
+    <!-- Navigation -->
+    <div class="nav-links">
+        <a href="/seller/profile.html">Profile</a>
+        <a href="/seller/manage-properties.html">Manage Properties</a>
+        <a href="#" onclick="logout()">Logout</a>
+    </div>
+
+    <!-- Profile Section -->
+    <div class="profile-section">
+        <h2>Profile Information</h2>
+        <p><strong>Name:</strong> <span id="sellerName">Loading...</span></p>
+        <p><strong>Email:</strong> <span id="sellerEmail">Loading...</span></p>
+        <p><strong>User ID:</strong> <span id="sellerId">Loading...</span></p>
+    </div>
+
+    <!-- Reviews Section -->
+    <div class="reviews-section">
+        <h3>Reviews from Buyers</h3>
+        <div id="reviewsList">
+            <!-- Reviews will be dynamically loaded here via JavaScript -->
+            <p>Loading reviews...</p>
+        </div>
+    </div>
+</div>
+
+<script src="/js/seller.js"></script>
+<script>
+    // On page load, check if seller is logged in and load profile and reviews
+    document.addEventListener('DOMContentLoaded', function() {
+        loadSellerInfo();
+        loadReviews();
+    });
+
+    function loadSellerInfo() {
+        const user = JSON.parse(localStorage.getItem('currentUser'));
+        if (user && user.role === 'SELLER') {
+            document.getElementById('sellerName').textContent = user.name || 'N/A';
+            document.getElementById('sellerEmail').textContent = user.email || 'N/A';
+            document.getElementById('sellerId').textContent = user.userId || 'N/A';
+        } else {
+            alert('Please log in as Seller to access this page.');
+            window.location.href = '/login.html';
+        }
+    }
+
+    function loadReviews() {
+        const user = JSON.parse(localStorage.getItem('currentUser'));
+        if (!user || user.role !== 'SELLER') return;
+
+        fetch(`/reviews/seller/${user.userId}`)
+            .then(response => {
+                if (response.ok) {
+                    return response.json();
+                } else {
+                    throw new Error('Failed to load reviews');
+                }
+            })
+            .then(reviews => {
+                const reviewsList = document.getElementById('reviewsList');
+                reviewsList.innerHTML = ''; // Clear loading message
+                if (reviews.length === 0) {
+                    reviewsList.innerHTML = '<p>No reviews yet.</p>';
+                    return;
+                }
+                reviews.forEach(review => {
+                    const reviewItem = document.createElement('div');
+                    reviewItem.className = 'review-item';
+                    reviewItem.innerHTML = `
+                            <p><strong>Buyer ID:</strong> ${review.buyerId}</p>
+                            <p><strong>Rating:</strong> <span class="rating">${review.rating}/5</span></p>
+                            <p><strong>Comment:</strong> ${review.comment}</p>
+                            <p><strong>Date:</strong> ${review.timestamp}</p>
+                        `;
+                    reviewsList.appendChild(reviewItem);
+                });
+            })
+            .catch(error => {
+                console.error('Error loading reviews:', error);
+                document.getElementById('reviewsList').innerHTML = '<p>Error loading reviews. Please try again later.</p>';
+            });
+    }
+
+    function logout() {
+        localStorage.removeItem('currentUser');
+        alert('Logged out successfully.');
+        window.location.href = '/login.html';
+    }
+</script>
+</body>
+</html>
