@@ -13,7 +13,7 @@ import java.util.UUID;
 
 @Service
 public class PropertyService {
-    // BST Node class for Property (used for efficient searching by price)
+    // BST Node class for Property (used for efficient searching by price)))
     private class BSTNode {
         Property property; // The property data stored in this node
         BSTNode left; // Left child (properties with lower price)
