@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Submit Review - Real Estate Portal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/buyer.css">
+</head>
+<body>
+<div class="container">
+    <h1>Submit Review</h1>
+
+    <!-- Navigation -->
+    <div class="nav-links">
+        <a href="/buyer/dashboard.html">Home</a>
+        <a href="/buyer/profile.html">Profile</a>
+        <a href="/buyer/submit-review.html">Submit Review</a>
+        <a href="#" onclick="logout()">Logout</a>
+    </div>
+
+    <!-- Review Form -->
+    <div class="review-form">
+        <form id="reviewForm">
+            <div class="form-group">
+                <label for="sellerId">Seller ID:</label>
+                <input type="text" id="sellerId" required placeholder="Enter Seller ID (e.g., S1234567)">
+            </div>
+            <div class="form-group">
+                <label for="rating">Rating (1-5):</label>
+                <select id="rating" required>
+                    <option value="5">5 - Excellent</option>
+                    <option value="4">4 - Good</option>
+                    <option value="3">3 - Average</option>
+                    <option value="2">2 - Poor</option>
+                    <option value="1">1 - Terrible</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="comment">Comment:</label>
+                <textarea id="comment" required placeholder="Write your review here..."></textarea>
+            </div>
+            <button type="submit">Submit Review</button>
+        </form>
+    </div>
+</div>
+
+<script src="/js/buyer.js"></script>
+<script>
+    // On page load, check if buyer is logged in
+    document.addEventListener('DOMContentLoaded', function() {
+        loadBuyerInfo();
+        document.getElementById('reviewForm').addEventListener('submit', submitReview);
+    });
+
+    function loadBuyerInfo() {
+        const user = JSON.parse(localStorage.getItem('currentUser'));
+        if (!user || user.role !== 'BUYER') {
+            alert('Please log in as Buyer to submit a review.');
+            window.location.href = '/login.html';
+        }
+    }
+
+    function submitReview(event) {
+        event.preventDefault();
+        const user = JSON.parse(localStorage.getItem('currentUser'));
+        if (!user || user.role !== 'BUYER') return;
+
+        const sellerId = document.getElementById('sellerId').value;
+        const rating = parseInt(document.getElementById('rating').value);
+        const comment = document.getElementById('comment').value;
+
+        fetch('/reviews', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: new URLSearchParams({
+                sellerId: sellerId,
+                buyerId: user.userId,
+                rating: rating,
+                comment: comment
+            })
+        })
+            .then(response => {
+                if (response.ok) {
+                    return response.json();
+                } else {
+                    throw new Error('Failed to submit review');
+                }
+            })
+            .then(review => {
+                alert('Review submitted successfully!');
+                document.getElementById('reviewForm').reset();
+            })
+            .catch(error => {
+                console.error('Error submitting review:', error);
+                alert('Error submitting review. Please try again.');
+            });
+    }
+
+    function logout() {
+        localStorage.removeItem('currentUser');
+        alert('Logged out successfully.');
+        window.location.href = '/login.html';
+    }
+</script>
+</body>
+</html>
