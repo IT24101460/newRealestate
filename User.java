@@ -53,22 +53,22 @@ public abstract class User {
         this.role = role;
     }
 
-    
+    //method to store the user details in a tube manner for easy access,user object to string
     public String toDataString() {
         return userId + "|" + name + "|" + email + "|" + password + "|" + role;
     }
 
-   
+   //the saved string is used to make a user object
     public static User fromDataString(String data) {
-        String[] parts = data.split("\\|");
+        String[] parts = data.split("\\|");   //like an array type with index
         if (parts.length == 5) {
             User user = new User() {
                 @Override
-                public String getRole() {
+                public String getRole() {  //temporary class created and return role
                     return this.role;
                 }
             };
-            user.setUserId(parts[0]);
+            user.setUserId(parts[0]);        //set attributes to index value
             user.setName(parts[1]);
             user.setEmail(parts[2]);
             user.setPassword(parts[3]);
@@ -77,7 +77,7 @@ public abstract class User {
         }
         return null; // Return null
     }
-
+//to get the user data in a readable way
     @Override
     public String toString() {
         return "User{" +
