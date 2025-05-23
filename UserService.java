@@ -29,7 +29,7 @@ public class UserService {
         User user = new User(userId, name, email, password, role.toUpperCase()) {
             @Override
             public String getRole() {
-                return "";
+                return this.role;
             }
         }; // Create new User object
         FileHandler.writeUser(user.toDataString()); // Write to users.txt using FileHandler
@@ -91,7 +91,7 @@ public class UserService {
                     updatedUser = new User(userId, name, email, password, user.getRole()) {
                         @Override
                         public String getRole() {
-                            return "";
+                            return this.role;
                         }
                     };
                     updatedData.add(updatedUser.toDataString()); // Add updated data
