@@ -1,160 +1,103 @@
 package com.realestate.util;
 
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
 
 public class FileHandler {
+    // File paths for data storage
     private static final String USERS_FILE = "src/main/resources/data/users.txt";
     private static final String PROPERTIES_FILE = "src/main/resources/data/properties.txt";
     private static final String REVIEWS_FILE = "src/main/resources/data/reviews.txt";
     private static final String RESERVATIONS_FILE = "src/main/resources/data/reservations.txt";
 
-    // Generic method to create file if it doesn't exist
-    private static void ensureFileExists(Path path) throws IOException {
-        if (!Files.exists(path)) {
-            Files.createDirectories(path.getParent());
-            Files.createFile(path);
+    // Ensure the data directory exists
+    static {
+        try {
+            Files.createDirectories(Paths.get("src/main/resources/data"));
+        } catch (IOException e) {
+            System.err.println("Error creating data directory: " + e.getMessage());
         }
     }
 
-    // Users I/O
+    // Methods for Users
     public static List<String> readUsers() throws IOException {
-        Path path = Paths.get(USERS_FILE);
-        try {
-            ensureFileExists(path);
-            return Files.readAllLines(path);
-        } catch (IOException e) {
-            System.err.println("Error reading users file: " + e.getMessage());
-            return Collections.emptyList();
-        }
+        return readFile(USERS_FILE);
     }
 
     public static void writeUser(String userData) throws IOException {
-        Path path = Paths.get(USERS_FILE);
-        try {
-            ensureFileExists(path);
-            Files.writeString(path, userData + "\n", StandardOpenOption.APPEND);
-        } catch (IOException e) {
-            System.err.println("Error writing user to file: " + e.getMessage());
-            throw e;
-        }
+        writeToFile(USERS_FILE, userData);
     }
 
     public static void updateUsers(List<String> usersData) throws IOException {
-        Path path = Paths.get(USERS_FILE);
-        try {
-            ensureFileExists(path);
-            Files.write(path, usersData, StandardOpenOption.TRUNCATE_EXISTING);
-        } catch (IOException e) {
-            System.err.println("Error updating users file: " + e.getMessage());
-            throw e;
-        }
+        writeAllToFile(USERS_FILE, usersData);
     }
 
-    // Properties I/O
+    // Methods for Properties
     public static List<String> readProperties() throws IOException {
-        Path path = Paths.get(PROPERTIES_FILE);
-        try {
-            ensureFileExists(path);
-            return Files.readAllLines(path);
-        } catch (IOException e) {
-            System.err.println("Error reading properties file: " + e.getMessage());
-            return Collections.emptyList();
-        }
+        return readFile(PROPERTIES_FILE);
     }
 
     public static void writeProperty(String propertyData) throws IOException {
-        Path path = Paths.get(PROPERTIES_FILE);
-        try {
-            ensureFileExists(path);
-            Files.writeString(path, propertyData + "\n", StandardOpenOption.APPEND);
-        } catch (IOException e) {
-            System.err.println("Error writing property to file: " + e.getMessage());
-            throw e;
-        }
+        writeToFile(PROPERTIES_FILE, propertyData);
     }
 
     public static void updateProperties(List<String> propertiesData) throws IOException {
-        Path path = Paths.get(PROPERTIES_FILE);
-        try {
-            ensureFileExists(path);
-            Files.write(path, propertiesData, StandardOpenOption.TRUNCATE_EXISTING);
-        } catch (IOException e) {
-            System.err.println("Error updating properties file: " + e.getMessage());
-            throw e;
-        }
+        writeAllToFile(PROPERTIES_FILE, propertiesData);
     }
 
-    // Reviews I/O
+    // Methods for Reviews
     public static List<String> readReviews() throws IOException {
-        Path path = Paths.get(REVIEWS_FILE);
-        try {
-            ensureFileExists(path);
-            return Files.readAllLines(path);
-        } catch (IOException e) {
-            System.err.println("Error reading reviews file: " + e.getMessage());
-            return Collections.emptyList();
-        }
+        return readFile(REVIEWS_FILE);
     }
 
     public static void writeReview(String reviewData) throws IOException {
-        Path path = Paths.get(REVIEWS_FILE);
-        try {
-            ensureFileExists(path);
-            Files.writeString(path, reviewData + "\n", StandardOpenOption.APPEND);
-        } catch (IOException e) {
-            System.err.println("Error writing review to file: " + e.getMessage());
-            throw e;
-        }
+        writeToFile(REVIEWS_FILE, reviewData);
     }
 
     public static void updateReviews(List<String> reviewsData) throws IOException {
-        Path path = Paths.get(REVIEWS_FILE);
-        try {
-            ensureFileExists(path);
-            Files.write(path, reviewsData, StandardOpenOption.TRUNCATE_EXISTING);
-        } catch (IOException e) {
-            System.err.println("Error updating reviews file: " + e.getMessage());
-            throw e;
-        }
+        writeAllToFile(REVIEWS_FILE, reviewsData);
     }
 
-    // Reservations I/O
+    // Methods for Reservations
     public static List<String> readReservations() throws IOException {
-        Path path = Paths.get(RESERVATIONS_FILE);
-        try {
-            ensureFileExists(path);
-            return Files.readAllLines(path);
-        } catch (IOException e) {
-            System.err.println("Error reading reservations file: " + e.getMessage());
-            return Collections.emptyList();
-        }
+        return readFile(RESERVATIONS_FILE);
     }
 
     public static void writeReservation(String reservationData) throws IOException {
-        Path path = Paths.get(RESERVATIONS_FILE);
-        try {
-            ensureFileExists(path);
-            Files.writeString(path, reservationData + "\n", StandardOpenOption.APPEND);
-        } catch (IOException e) {
-            System.err.println("Error writing reservation to file: " + e.getMessage());
-            throw e;
-        }
+        writeToFile(RESERVATIONS_FILE, reservationData);
     }
 
     public static void updateReservations(List<String> reservationsData) throws IOException {
-        Path path = Paths.get(RESERVATIONS_FILE);
-        try {
-            ensureFileExists(path);
-            Files.write(path, reservationsData, StandardOpenOption.TRUNCATE_EXISTING);
-        } catch (IOException e) {
-            System.err.println("Error updating reservations file: " + e.getMessage());
-            throw e;
+        writeAllToFile(RESERVATIONS_FILE, reservationsData);
+    }
+
+    // Generic method to read all lines from a file
+    private static List<String> readFile(String filePath) throws IOException {
+        File file = new File(filePath);
+        if (!file.exists()) {
+            return new ArrayList<>(); // Return empty list if file doesn't exist
+        }
+        return Files.readAllLines(Paths.get(filePath));
+    }
+
+    // Generic method to append a single line to a file
+    private static void writeToFile(String filePath, String data) throws IOException {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath, true))) {
+            writer.write(data);
+            writer.newLine(); // Add newline after the data
+        }
+    }
+
+    // Generic method to overwrite a file with a list of data
+    private static void writeAllToFile(String filePath, List<String> data) throws IOException {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
+            for (String line : data) {
+                writer.write(line);
+                writer.newLine(); // Add newline after each line
+            }
         }
     }
 }
