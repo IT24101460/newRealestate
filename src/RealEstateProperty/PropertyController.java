@@ -16,7 +16,7 @@ public class PropertyController {
     @Autowired
     private PropertyService propertyService;
 
-    // CREATE : Adds a new property
+    // CREATE Operation: Adds a new property
     // Endpoint: POST /properties
     @PostMapping
     public ResponseEntity<Property> addProperty(
@@ -49,12 +49,20 @@ public class PropertyController {
         return ResponseEntity.notFound().build(); // Returns 404 if not found
     }
 
-    // READ Operation: Retrieves properties sorted by price
-    // Endpoint: GET /properties/sorted
-    @GetMapping("/sorted")
-    public ResponseEntity<List<Property>> getPropertiesSortedByPrice() {
-        List<Property> properties = propertyService.getPropertiesSortedByPrice();
-        return ResponseEntity.ok(properties); // Returns list of properties sorted by price
+    // READ Operation: Retrieves properties sorted by price using BST
+    // Endpoint: GET /properties/sorted/bst
+    @GetMapping("/sorted/bst")
+    public ResponseEntity<List<Property>> getPropertiesSortedByPriceUsingBST() {
+        List<Property> properties = propertyService.getPropertiesSortedByPriceUsingBST();
+        return ResponseEntity.ok(properties); // Returns list of properties sorted by price using BST
+    }
+
+    // READ Operation: Retrieves properties sorted by price using Quick Sort
+    // Endpoint: GET /properties/sorted/quick
+    @GetMapping("/sorted/quick")
+    public ResponseEntity<List<Property>> getPropertiesSortedByPriceUsingQuickSort() throws IOException {
+        List<Property> properties = propertyService.getPropertiesSortedByPriceUsingQuickSort();
+        return ResponseEntity.ok(properties); // Returns list of properties sorted by price using Quick Sort
     }
 
     // READ Operation: Retrieves properties by seller ID
