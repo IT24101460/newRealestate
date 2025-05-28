@@ -6,27 +6,25 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 
 @Service
 public class PropertyService {
-    // BST Node class for Property (used for efficient searching by price)))
+    // BST Node class for Property (used for efficient searching and dynamic management by price)
     private class BSTNode {
-        Property property; // The property data stored in this node
+        Property prop; // The property data stored in this node
         BSTNode left; // Left child (properties with lower price)
         BSTNode right; // Right child (properties with higher price)
 
-        BSTNode(Property property) {
-            this.property = property;
+        BSTNode(Property prop) {
+            this.prop = prop;
             this.left = null;
             this.right = null;
         }
     }
 
-    private BSTNode root; // Root of the BST for price-based searches
+    private BSTNode root; // Root of the BST for price-based dynamic management
 
     // Constructor: Initializes an empty BST and loads existing properties from file
     public PropertyService() {
@@ -34,7 +32,7 @@ public class PropertyService {
         loadPropertiesIntoBST(); // Load properties from file into BST on startup
     }
 
-    // Helper method to load properties from file into BST for efficient searching
+    // Helper method to load properties from file into BST for dynamic management
     private void loadPropertiesIntoBST() {
         try {
             List<String> propertyData = FileHandler.readProperties(); // Read raw data from properties.txt
@@ -51,7 +49,7 @@ public class PropertyService {
         }
     }
 
-    // Helper method to insert a property into the BST based on price
+    // Helper method to insert a property into the BST based on price for dynamic updates
     private void insertIntoBST(Property property) {
         root = insertRec(root, property);
     }
@@ -61,9 +59,9 @@ public class PropertyService {
         if (root == null) {
             return new BSTNode(property); // Create new node if position is empty
         }
-        if (property.getPrice() < root.property.getPrice()) {
+        if (property.getPrice() < root.prop.getPrice()) {
             root.left = insertRec(root.left, property); // Insert into left subtree
-        } else if (property.getPrice() > root.property.getPrice()) {
+        } else if (property.getPrice() > root.prop.getPrice()) {
             root.right = insertRec(root.right, property); // Insert into right subtree
         }
         return root;
@@ -73,17 +71,47 @@ public class PropertyService {
     private void inOrderTraversal(BSTNode root, List<Property> sortedProperties) {
         if (root != null) {
             inOrderTraversal(root.left, sortedProperties); // Visit left subtree
-            sortedProperties.add(root.property); // Add current node
+            sortedProperties.add(root.prop); // Add current node
             inOrderTraversal(root.right, sortedProperties); // Visit right subtree
         }
     }
 
-    // CREATE Operation: Adds a new property to properties.txt
+    // Quick Sort implementation for sorting properties by price as an alternative to BST traversal
+    private void quickSort(List<Property> properties, int low, int high) {
+        if (low < high) {
+            int pi = partition(properties, low, high); // Get partition index
+            quickSort(properties, low, pi - 1); // Sort left part
+            quickSort(properties, pi + 1, high); // Sort right part
+        }
+    }
+
+    // Partition helper for Quick Sort
+    private int partition(List<Property> properties, int low, int high) {
+        double pivot = properties.get(high).getPrice(); // Choose last element as pivot
+        int i = (low - 1); // Index of smaller element
+        for (int j = low; j < high; j++) {
+            // If current element is smaller than or equal to pivot
+            if (properties.get(j).getPrice() <= pivot) {
+                i++; // Increment index of smaller element
+                // Swap elements
+                Property temp = properties.get(i);
+                properties.set(i, properties.get(j));
+                properties.set(j, temp);
+            }
+        }
+        // Place pivot in its correct position
+        Property temp = properties.get(i + 1);
+        properties.set(i + 1, properties.get(high));
+        properties.set(high, temp);
+        return i + 1;
+    }
+
+    // CREATE Operation: Adds a new property to properties.txt and dynamically to BST
     public Property addProperty(String title, String location, double price, String description, String sellerId, String imageUrl) throws IOException {
         String propertyId = "P" + UUID.randomUUID().toString().substring(0, 7); // Unique ID with property prefix
         Property property = new Property(propertyId, title, location, price, description, sellerId, imageUrl); // Create new Property object
         FileHandler.writeProperty(property.toDataString()); // Write to properties.txt using FileHandler
-        insertIntoBST(property); // Insert into BST for searching
+        insertIntoBST(property); // Dynamically insert into BST for searching and sorting
         return property; // Return the created property
     }
 
@@ -117,10 +145,20 @@ public class PropertyService {
     }
 
     // READ Operation: Retrieves properties sorted by price using BST in-order traversal
-    public List<Property> getPropertiesSortedByPrice() {
+    public List<Property> getPropertiesSortedByPriceUsingBST() {
         List<Property> sortedProperties = new ArrayList<>();
         inOrderTraversal(root, sortedProperties); // Perform in-order traversal to get sorted list by price
-        return sortedProperties; // Return sorted list
+        return sortedProperties; // Return sorted list using BST
+    }
+
+    // READ Operation: Retrieves properties sorted by price using Quick Sort as an alternative
+    public List<Property> getPropertiesSortedByPriceUsingQuickSort() throws IOException {
+        List<Property> properties = getAllProperties(); // Get all properties from file
+        if (properties.isEmpty()) {
+            return properties; // Return empty list if no properties
+        }
+        quickSort(properties, 0, properties.size() - 1); // Apply Quick Sort on the list by price
+        return properties; // Return sorted list using Quick Sort
     }
 
     // READ Operation: Retrieves properties by seller ID
@@ -138,7 +176,7 @@ public class PropertyService {
         return properties; // Return the list of properties for the seller
     }
 
-    // UPDATE Operation: Updates an existing property in properties.txt
+    // UPDATE Operation: Updates an existing property in properties.txt and refreshes BST
     public Property updateProperty(String propertyId, String title, String location, double price, String description, String imageUrl) throws IOException {
         List<String> propertyData = FileHandler.readProperties(); // Read all current properties from file
         List<String> updatedData = new ArrayList<>();
@@ -150,7 +188,6 @@ public class PropertyService {
                     // Update the property with new values, retaining original sellerId
                     updatedProperty = new Property(propertyId, title, location, price, description, property.getSellerId(), imageUrl);
                     updatedData.add(updatedProperty.toDataString()); // Add updated data to list
-                    // Since BST is price-based, reload BST to handle price changes
                 } else {
                     updatedData.add(data); // Keep unchanged data
                 }
@@ -165,7 +202,7 @@ public class PropertyService {
         return updatedProperty; // Return updated property or null if not found
     }
 
-    // DELETE Operation: Removes a property from properties.txt
+    // DELETE Operation: Removes a property from properties.txt and refreshes BST
     public boolean deleteProperty(String propertyId) throws IOException {
         List<String> propertyData = FileHandler.readProperties(); // Read all current properties from file
         List<String> updatedData = new ArrayList<>();
